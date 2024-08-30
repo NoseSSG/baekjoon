@@ -1,6 +1,6 @@
 # https://www.acmicpc.net/problem/1260
 import sys
-# sys.stdin = open('input_1260.txt','r')
+sys.stdin = open('input_1260.txt','r')
 
 import heapq
 from collections import deque
@@ -11,7 +11,7 @@ def DFS(start):
         return
     dfs_ans.append(start)
     visited[start] = True
-    for next in graph[start]:
+    for next in sorted(graph[start]):
         if visited[next]: continue
         DFS(next)
 
@@ -24,29 +24,26 @@ def BFS(start):
         if visited[now]: continue
         bfs_ans.append(now)
         visited[now] = True
-        for next in graph[now]:
+        for next in sorted(graph[now]):
             if visited[next]: continue
             d_que.append(next)
 
 
-# for test_case in range(1,T+1):
-V,E,S = map(int,input().split())
-graph ={}
-visited = [False]*(V+1)
-for i in range(1,V+1):
-    graph[i] = [i]
-dfs_ans = []
-bfs_ans = []
-for i in range(E):
-    A,B = map(int,input().split())
-    # if A not in graph:
-    #     graph[A] = [A]
-    # if B not  in graph:
-    #     graph[B] = [B]
-    heapq.heappush(graph[A],B)
-    heapq.heappush(graph[B],A)
-DFS(S)
-print(*dfs_ans)
-visited = [False] * (V + 1)
-BFS(S)
-print(*bfs_ans)
+for test_case in range(1,T+1):
+    V,E,S = map(int,input().split())
+    graph ={}
+    visited = [False]*(V+1)
+    for i in range(1,V+1):
+        graph[i] = [i]
+    dfs_ans = []
+    bfs_ans = []
+    for i in range(E):
+        A,B = map(int,input().split())
+        graph[A].append(B)
+        graph[B].append(A)
+
+    DFS(S)
+    print(*dfs_ans)
+    visited = [False] * (V + 1)
+    BFS(S)
+    print(*bfs_ans)
