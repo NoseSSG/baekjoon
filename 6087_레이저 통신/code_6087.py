@@ -1,8 +1,45 @@
 # https://www.acmicpc.net/problem/6087
 import sys
-sys.stdin = open('input_6087.txt','r')
+# sys.stdin = open('input_6087.txt','r')
+import pprint
+from collections import deque
+import heapq
+
+def BFS(xy):
+    x,y = xy
+    h_que = []
+    distance[x][y]=0
+    for d in range(4):
+        heapq.heappush(h_que,(0,x,y,d))
+    # heapq.heappush(h_que,(0,x,y,0))
+    while h_que:
+        cost,_x,_y,_d = heapq.heappop(h_que)
+        distance[_x][_y] = cost
+        # pprint.pprint(distance)
+        if temp[_x][_y] == 'C': return cost
+        for d in range(4):
+            if (d+2) % 4 == _d: continue
+            nx,ny = _x+dx[d],_y+dy[d]
+            if 0 <= nx < H and 0 <= ny < W and temp[nx][ny] != '*' and distance[nx][ny] == -1:
+                if d == _d:
+                    heapq.heappush(h_que,(cost,nx,ny,d))
+                else: heapq.heappush(h_que,(cost+1,nx,ny,d))
+
 
 W,H = map(int,input().split())
-temp = [list(map(str,input().split())) for _ in range(H)]
+temp = [list(map(str,input().rstrip())) for _ in range(H)]
 dx = [1,0,-1,0]
 dy = [0,1,0,-1]
+distance = [[-1]*W for _ in range(H)]
+flag = False
+for i in range(H):
+    for j in range(W):
+        if temp[i][j] == 'C':
+            temp[i][j] = '*'
+            # pprint.pprint(temp)
+            ans = BFS((i,j))
+            flag= True
+            break
+    if flag: break
+# pprint.pprint(distance)
+print(ans)
