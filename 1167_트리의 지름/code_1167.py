@@ -17,6 +17,7 @@ def BFS(start):
                 d_que.append((next,visited[next]))
 
 N = int(input())
+
 tree = {}
 for _ in range(N):
     temp = list(map(int,input().split()))
