@@ -20,7 +20,7 @@ ans = set()
 visited = [False] * (N+1)
 for now in range(1,N+1):
     temp_set = set()
-    if visited[now]:
+    if now in ans:
         continue
     temp_set.add(now)
     DFS(now,num[now],temp_set)
