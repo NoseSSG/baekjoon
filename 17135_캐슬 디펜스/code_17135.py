@@ -2,58 +2,44 @@
 import sys
 # sys.stdin = open('input_17135.txt','r')
 
-from itertools import permutations
+from itertools import combinations
 from collections import deque
 
-def BFS(a,turn,killed):
-    d_que = deque()
-    d_que.append((turn,a,0))
+def BFS(archers):
+    copy_enemy = [row[:] for row in enemy]
+    total_kills = 0
 
-    while d_que:
-        now_x,now_y,cnt = d_que.popleft()
-        for d in range(3):
-            next_x, next_y = now_x + dx[d], now_y + dy[d]
-            if turn< next_x < N and 0 <= next_y < M and cnt<=D and (next_x,next_y) not in kill_enemy:
-                if reverse_enemy[next_x][next_y]:
-                    return (next_x,next_y)
-                else:
-                    d_que.append((next_x,next_y,cnt+1))
-
-
-
-
-
-N,M,D = map(int,input().split())
-enemy = [list(map(int,input().split())) for _ in range(N)]
-reverse_enemy = enemy[::-1]
-
-dx = [0,1,0]
-dy = [-1,0,1]
-ans = 0
-temp = permutations(list(range(M)),3)
-# for turn in range(-1,N-1):
-#     temp_ans = 0
-#     for i in temp:
-#         kill_enemy = set()
-#         for j in i:
-#             kill = BFS(j,turn)
-#             if kill is not None:
-#                 kill_enemy.add(kill)
-#         temp_ans = max(temp_ans,len(kill_enemy))
-#     print(turn)
-#     reverse_enemy[turn+1] = [0] * M
-#     print(reverse_enemy)
-#     ans += temp_ans
-# print(ans)
-
-for archers in temp:
-    temp_ans = 0
-    kill_enemy = set()
-    for turn in range(-1,N-1):
+    for i in range(N-1, -1, -1):
+        killed_enemy = set()
         for archer in archers:
-            kill = BFS(archer,turn,kill_enemy)
-            if kill is not None:
-                kill_enemy.add(kill)
-    temp_ans = max(temp_ans,len(kill_enemy))
-    ans = max(temp_ans,ans)
+            d_que = deque([(i, archer, 1)])  # (x, y, cnt)
+            while d_que:
+                x, y, cnt = d_que.popleft()
+                if cnt > D:
+                    break
+                if copy_enemy[x][y] == 1:
+                    killed_enemy.add((x, y))
+                    break
+
+                for d in range(3):
+                    nx, ny = x + dx[d], y + dy[d]
+                    if 0 <= nx < N and 0 <= ny < M:
+                        d_que.append((nx, ny, cnt + 1))
+
+        for x, y in killed_enemy:
+            if copy_enemy[x][y] == 1:
+                total_kills += 1
+                copy_enemy[x][y] = 0
+
+    return total_kills
+
+N, M, D = map(int, input().split())
+enemy = [list(map(int, input().split())) for _ in range(N)]
+dx = [0, -1, 0]
+dy = [-1, 0, 1]
+
+ans = 0
+for archers in combinations(range(M), 3):
+    ans = max(ans, BFS(archers))
+
 print(ans)
